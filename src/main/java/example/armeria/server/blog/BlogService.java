@@ -31,22 +31,22 @@ public class BlogService {
         return HttpResponse.ofJson(blogPost);
     }
 
-    @Get("/blogs/:id")
-    public HttpResponse getBlogPost(@Param int id) {
-        BlogPost blogPost = blogPosts.get(id);
-        return HttpResponse.ofJson(blogPost);
-    }
-
     @Get("/blogs")
     @ProducesJson
     public Iterable<BlogPost> getBlogPosts(@Param @Default("true") boolean descending) {
         if (descending) {
             return blogPosts.entrySet()
-                            .stream()
-                            .sorted(Collections.reverseOrder(Comparator.comparingInt(Entry::getKey)))
-                            .map(Entry::getValue).collect(Collectors.toList());
+                    .stream()
+                    .sorted(Collections.reverseOrder(Comparator.comparingInt(Entry::getKey)))
+                    .map(Entry::getValue).collect(Collectors.toList());
         }
         return blogPosts.values().stream().collect(Collectors.toList());
+    }
+
+    @Get("/blogs/:id")
+    public HttpResponse getBlogPost(@Param int id) {
+        BlogPost blogPost = blogPosts.get(id);
+        return HttpResponse.ofJson(blogPost);
     }
 
     @Put("/blogs/:id")
@@ -55,10 +55,7 @@ public class BlogService {
         if (oldBlogPost == null) {
             return HttpResponse.of(HttpStatus.NOT_FOUND);
         }
-        BlogPost newBlogPost = new BlogPost(id, blogPost.getTitle(),
-                                            blogPost.getContent(),
-                                            oldBlogPost.getCreatedAt(),
-                                            blogPost.getCreatedAt());
+        BlogPost newBlogPost = new BlogPost(id, blogPost.getTitle(), blogPost.getContent(), oldBlogPost.getCreatedAt(), blogPost.getCreatedAt());
         blogPosts.put(id, newBlogPost);
         return HttpResponse.ofJson(newBlogPost);
     }
